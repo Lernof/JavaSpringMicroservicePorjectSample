@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.javaspring.micro.server.orderservice.clients.UserClient;
 import ru.javaspring.micro.server.orderservice.models.Order;
-import ru.javaspring.micro.server.orderservice.models.User;
+import ru.javaspring.micro.server.orderservice.dto.UserDTO;
 import ru.javaspring.micro.server.orderservice.repositories.OrderRepository;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class OrderService {
     }
 
     public Order createOrder(Order order) {
-        User user = userClient.getUserById(order.getUserId());
+        UserDTO user = userClient.getUserById(order.getUserId());
         if (user == null) {
             throw new RuntimeException("User not found with id: " + order.getUserId());
         }
@@ -45,7 +45,7 @@ public class OrderService {
             order.setProduct(orderDetails.getProduct());
             order.setPrice(orderDetails.getPrice());
             order.setUserId(orderDetails.getUserId());
-            User user = userClient.getUserById(order.getUserId());
+            UserDTO user = userClient.getUserById(order.getUserId());
             if (user == null) {
                 throw new RuntimeException("User not found with id: " + order.getUserId());
             }
@@ -62,7 +62,7 @@ public class OrderService {
         }
     }
 
-    public User getUserForOrder(Long orderId) {
+    public UserDTO getUserForOrder(Long orderId) {
         Optional<Order> optionalOrder = orderRepository.findById(orderId);
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();

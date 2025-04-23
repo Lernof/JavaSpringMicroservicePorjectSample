@@ -1,9 +1,9 @@
-package ru.javaspring.micro.server.orderservice.models;
+package ru.javaspring.micro.server.orderservice.dto;
 
 import lombok.Data;
 
 @Data
-public class User {
+public class UserDTO {
     private long id;
     private String username;
     private String email;

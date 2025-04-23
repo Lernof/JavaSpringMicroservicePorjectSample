@@ -3,8 +3,9 @@ package ru.javaspring.micro.server.orderservice.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.javaspring.micro.server.orderservice.dto.OrderResponseDTO;
 import ru.javaspring.micro.server.orderservice.models.Order;
-import ru.javaspring.micro.server.orderservice.models.User;
+import ru.javaspring.micro.server.orderservice.dto.UserDTO;
 import ru.javaspring.micro.server.orderservice.services.OrderService;
 
 import java.util.List;
@@ -26,8 +27,12 @@ public class OrderController {
     }
 
     @GetMapping
-    public List<Order> getAllOrders() {
-        return orderService.getAllOrders();
+    public List<OrderResponseDTO> getAllOrders() {
+        List<Order> myOrders = orderService.getAllOrders();
+        return myOrders.stream().map(order -> {
+            UserDTO user = orderService.getUserForOrder(order.getId());
+            return new OrderResponseDTO(order.getId(), order.getProduct(), order.getPrice(), user);
+        }).toList();
     }
 
     @GetMapping("/{id}")
@@ -58,9 +63,9 @@ public class OrderController {
     }
 
     @GetMapping("/{id}/user")
-    public ResponseEntity<User> getUserForOrder(@PathVariable Long id) {
+    public ResponseEntity<UserDTO> getUserForOrder(@PathVariable Long id) {
         try {
-            User user = orderService.getUserForOrder(id);
+            UserDTO user = orderService.getUserForOrder(id);
             return ResponseEntity.ok(user);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
